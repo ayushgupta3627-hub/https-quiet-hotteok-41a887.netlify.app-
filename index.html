@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Theory · Vault Distributed Storage Engine</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ACTIVE THEORY FULLSCREEN FLUID CANVAS -->
+    <canvas id="fluid-canvas"></canvas>
+    <div class="grid-bg"></div>
+
+    <!-- CUSTOM INTERACTIVE CURSOR -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <!-- MAIN APPLICATION WRAPPER -->
+    <div class="app-wrapper">
+
+        <!-- NAVBAR -->
+        <header class="navbar">
+            <div class="brand-block">
+                <div class="brand-logo-mark">
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                </div>
+                <div class="brand-text-block">
+                    <h1>ACTIVE THEORY <span>/ VAULT</span></h1>
+                    <span class="brand-tag">Fault-Tolerant Distributed Cluster • HackLPU</span>
+                </div>
+            </div>
+
+            <div class="nav-metrics">
+                <div class="metric-pill">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>FPS:</span>
+                    <span class="val" id="fps-counter">60</span>
+                </div>
+
+                <div class="metric-pill">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>QUORUM:</span>
+                    <span class="val">W(2)+R(2)&gt;N(3)</span>
+                </div>
+
+                <button class="audio-toggle-btn" id="audio-toggle"><i class="fa-solid fa-volume-high"></i> SOUND ON</button>
+            </div>
+        </header>
+
+        <!-- HERO MARQUEE BANNER -->
+        <section class="hero-banner">
+            <div class="hero-heading">
+                DISTRIBUTED <span>OBJECT STORAGE</span>
+            </div>
+            <div class="hero-meta">
+                <span>CONSISTENT HASHING • CRC32 CHECKSUM</span>
+                <span class="highlight">STATUS: CLUSTER ONLINE (3/3 NODES)</span>
+            </div>
+        </section>
+
+        <!-- NAVIGATION TABS -->
+        <nav class="active-tabs">
+            <button class="tab-link active" data-tab="interactive"><i class="fa-solid fa-circle-nodes"></i> 01 // Cluster Topology</button>
+            <button class="tab-link" data-tab="chaos"><i class="fa-solid fa-biohazard"></i> 02 // Chaos Lab</button>
+            <button class="tab-link" data-tab="curl"><i class="fa-solid fa-terminal"></i> 03 // API & Terminal</button>
+        </nav>
+
+        <!-- PANES STAGE -->
+        <main class="stage-panes">
+
+            <!-- TAB 1: CLUSTER TOPOLOGY & OPERATIONS -->
+            <div class="pane-view active" id="pane-interactive">
+                <div class="grid-main">
+
+                    <!-- LEFT: RING VISUALIZER & STORAGE NODES -->
+                    <section class="active-card">
+                        <div class="card-head">
+                            <h2><i class="fa-solid fa-dharmachakra"></i> Hash Ring Node Matrix</h2>
+                            <button class="btn-at btn-violet-glow btn-sm" id="btn-rebalance-ring"><i class="fa-solid fa-rotate-right"></i> Reset Ring</button>
+                        </div>
+
+                        <!-- TOPOLOGY CANVAS CONTAINER -->
+                        <div class="canvas-container-box">
+                            <canvas id="topology-ring-canvas"></canvas>
+                        </div>
+
+                        <!-- 3 STORAGE NODES -->
+                        <div class="nodes-tri-grid">
+                            <!-- Node 1 -->
+                            <div class="node-active-box" id="node-active-box-node_1">
+                                <div class="node-box-head">
+                                    <div class="node-tag-group">
+                                        <span class="pulse-node-dot" id="dot-node_1"></span>
+                                        <span class="node-box-name">Node 1</span>
+                                    </div>
+                                    <span class="node-box-port">Port 8001</span>
+                                </div>
+                                <div class="node-stat-list">
+                                    <div class="node-stat-row"><span>Status:</span><span class="bold" id="txt-status-node_1">ONLINE</span></div>
+                                    <div class="node-stat-row"><span>Replicas:</span><span class="bold" id="cnt-chunks-node_1">0</span></div>
+                                </div>
+                                <div class="node-btn-row">
+                                    <button class="btn-at btn-rose-glow btn-sm" onclick="toggleNode('node_1')"><i class="fa-solid fa-power-off"></i> <span id="lbl-node_1">Kill</span></button>
+                                    <button class="btn-at btn-amber-glow btn-sm" onclick="corruptNode('node_1')"><i class="fa-solid fa-bug"></i> Corrupt</button>
+                                </div>
+                            </div>
+
+                            <!-- Node 2 -->
+                            <div class="node-active-box" id="node-active-box-node_2">
+                                <div class="node-box-head">
+                                    <div class="node-tag-group">
+                                        <span class="pulse-node-dot" id="dot-node_2"></span>
+                                        <span class="node-box-name">Node 2</span>
+                                    </div>
+                                    <span class="node-box-port">Port 8002</span>
+                                </div>
+                                <div class="node-stat-list">
+                                    <div class="node-stat-row"><span>Status:</span><span class="bold" id="txt-status-node_2">ONLINE</span></div>
+                                    <div class="node-stat-row"><span>Replicas:</span><span class="bold" id="cnt-chunks-node_2">0</span></div>
+                                </div>
+                                <div class="node-btn-row">
+                                    <button class="btn-at btn-rose-glow btn-sm" onclick="toggleNode('node_2')"><i class="fa-solid fa-power-off"></i> <span id="lbl-node_2">Kill</span></button>
+                                    <button class="btn-at btn-amber-glow btn-sm" onclick="corruptNode('node_2')"><i class="fa-solid fa-bug"></i> Corrupt</button>
+                                </div>
+                            </div>
+
+                            <!-- Node 3 -->
+                            <div class="node-active-box" id="node-active-box-node_3">
+                                <div class="node-box-head">
+                                    <div class="node-tag-group">
+                                        <span class="pulse-node-dot" id="dot-node_3"></span>
+                                        <span class="node-box-name">Node 3</span>
+                                    </div>
+                                    <span class="node-box-port">Port 8003</span>
+                                </div>
+                                <div class="node-stat-list">
+                                    <div class="node-stat-row"><span>Status:</span><span class="bold" id="txt-status-node_3">ONLINE</span></div>
+                                    <div class="node-stat-row"><span>Replicas:</span><span class="bold" id="cnt-chunks-node_3">0</span></div>
+                                </div>
+                                <div class="node-btn-row">
+                                    <button class="btn-at btn-rose-glow btn-sm" onclick="toggleNode('node_3')"><i class="fa-solid fa-power-off"></i> <span id="lbl-node_3">Kill</span></button>
+                                    <button class="btn-at btn-amber-glow btn-sm" onclick="corruptNode('node_3')"><i class="fa-solid fa-bug"></i> Corrupt</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <!-- RIGHT: OPERATIONS & LOG CONSOLE -->
+                    <section class="active-card">
+                        <div class="card-head">
+                            <h2><i class="fa-solid fa-sliders"></i> Object Operations</h2>
+                            <div class="preset-row">
+                                <button class="chip-at" onclick="applyPreset('json')">JSON</button>
+                                <button class="chip-at" onclick="applyPreset('jwt')">JWT</button>
+                                <button class="chip-at" onclick="applyPreset('config')">CONFIG</button>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="object-key">Object Key / Identifier</label>
+                            <input type="text" id="object-key" class="at-input" value="activetheory_demo_key">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="object-content">Object Data Bytes</label>
+                            <textarea id="object-content" class="at-textarea" rows="3">{"team": "Vault Active Theory", "event": "HackLPU 2026", "status": "Quorum Active"}</textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 0.85rem;">
+                            <button class="btn-at btn-cyan-glow" id="btn-put" style="flex: 2;"><i class="fa-solid fa-cloud-arrow-up"></i> PUT Object (W=2)</button>
+                            <button class="btn-at btn-violet-glow" id="btn-get" style="flex: 2;"><i class="fa-solid fa-cloud-arrow-down"></i> GET Object (R=2)</button>
+                            <button class="btn-at btn-rose-glow btn-sm" id="btn-delete"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+
+                        <div class="card-head" style="margin-top: 0.5rem; padding-bottom: 0.5rem;">
+                            <h2><i class="fa-solid fa-terminal"></i> Live Quorum Stream Log</h2>
+                            <span id="latency-tag" style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--cyan);">-- ms</span>
+                        </div>
+
+                        <div class="active-console-box" id="active-console-box">
+                            <div class="stream-row">
+                                <span class="time">[00:00:00]</span>
+                                <span class="info">Active Theory WebGL Fluid Canvas Initialized (60 FPS Engine).</span>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+            <!-- TAB 2: CHAOS LAB -->
+            <div class="pane-view" id="pane-chaos">
+                <div class="chaos-trio-grid">
+                    
+                    <div class="chaos-at-card">
+                        <div class="chaos-top">
+                            <div class="chaos-symbol"><i class="fa-solid fa-power-off"></i></div>
+                            <div class="chaos-desc">
+                                <h3>Node Outage Quorum Test</h3>
+                                <p>Terminates Node 1 and performs parallel PUT/GET to verify W=2 quorum success.</p>
+                            </div>
+                        </div>
+                        <button class="btn-at btn-cyan-glow" onclick="runActiveChaosScenario(1)"><i class="fa-solid fa-play"></i> Run Scenario 1</button>
+                    </div>
+
+                    <div class="chaos-at-card">
+                        <div class="chaos-top">
+                            <div class="chaos-symbol" style="color: var(--amber); border-color: var(--amber); background: rgba(245, 158, 11, 0.1);"><i class="fa-solid fa-shield-virus"></i></div>
+                            <div class="chaos-desc">
+                                <h3>CRC32 Read Repair Healing</h3>
+                                <p>Corrupts Node 2 raw storage bytes. Quorum GET detects checksum error and heals automatically.</p>
+                            </div>
+                        </div>
+                        <button class="btn-at btn-amber-glow" onclick="runActiveChaosScenario(2)"><i class="fa-solid fa-play"></i> Run Scenario 2</button>
+                    </div>
+
+                    <div class="chaos-at-card">
+                        <div class="chaos-top">
+                            <div class="chaos-symbol" style="color: var(--violet); border-color: var(--violet); background: rgba(139, 92, 246, 0.1);"><i class="fa-solid fa-hand-holding-hand"></i></div>
+                            <div class="chaos-desc">
+                                <h3>Hinted Handoff Offline Stream</h3>
+                                <p>Holds surrogate hints while Node 1 is down, flushing data automatically upon node recovery.</p>
+                            </div>
+                        </div>
+                        <button class="btn-at btn-violet-glow" onclick="runActiveChaosScenario(3)"><i class="fa-solid fa-play"></i> Run Scenario 3</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 3: API & TERMINAL -->
+            <div class="pane-view" id="pane-curl">
+                <section class="active-card">
+                    <div class="card-head">
+                        <h2><i class="fa-solid fa-terminal"></i> Terminal cURL Playground for Judges</h2>
+                    </div>
+
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">Execute these commands in your shell to test Vault Cluster API directly:</p>
+
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 0.5rem;">
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: var(--cyan);">1. PUT Object (Write Quorum W=2)</span>
+                            <div class="cli-code-block">
+                                <button class="btn-copy-cli" onclick="copyCliText(this)">Copy</button>
+                                <code>curl -X PUT "http://127.0.0.1:8000/objects/activetheory_demo_key" -d "Hello Active Theory HackLPU"</code>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: var(--cyan);">2. GET Object (Read Quorum R=2)</span>
+                            <div class="cli-code-block">
+                                <button class="btn-copy-cli" onclick="copyCliText(this)">Copy</button>
+                                <code>curl -X GET "http://127.0.0.1:8000/objects/activetheory_demo_key"</code>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="footer-at">
+            ACTIVE THEORY DIGITAL EXPERIENCE • <span>VAULT ENGINE HACKLPU 2026</span>
+        </footer>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
